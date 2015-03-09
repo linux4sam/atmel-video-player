@@ -140,7 +140,15 @@ void PlayControls::enableVolumeControl(bool enable){
     ui->volumeControl->setEnabled(enable);
 }
 
+int PlayControls::getCurrentVolume() {
+  return ui->volumeControl->value();
+}
+
 void PlayControls::on_exitButton_clicked()
 {
     qApp->exit();
+}
+
+bool PlayControls::getCurrentMute() {
+    return _onMute;
 }

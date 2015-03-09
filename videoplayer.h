@@ -58,14 +58,20 @@ public slots:
      * @return true if success
      */
     bool null();
+    bool setMute(bool mute);
+    bool setVolume(int volume);
 
 private:
     GstElement *_videoPipeline;      // Video Pipeline
     GstElement *_src;                // Source element
+    GstElement *_volume;            // Volume controller
 
     bool setState(GstState state);
     bool createPipeline();
     void destroyPipeline();
+
+    static gboolean BusCallback(GstBus*, GstMessage*, gpointer);
+    static void HandleMessage(GstMessage* message, gpointer);
 
 };
 

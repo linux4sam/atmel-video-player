@@ -54,6 +54,18 @@ public:
      */
     void enableVolumeControl(bool enable);
 
+    /**
+     * @brief getCurrentVolume
+     * @return the current volume configured on the volume slider
+     */
+    int getCurrentVolume();
+
+    /**
+     * @brief getCurrentMute
+     * @return the current mute state
+     */
+    bool getCurrentMute();
+
 signals:
     void play();
     void pause();

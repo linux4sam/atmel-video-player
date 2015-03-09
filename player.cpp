@@ -13,7 +13,7 @@
 
 #include <QDesktopWidget>
 
-Player::Player(QWidget *parent) :
+Player::Player(QString flPath, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Player),
     _hideTimeout(10)
@@ -44,8 +44,10 @@ Player::Player(QWidget *parent) :
     connect(_hideControlsTimer, SIGNAL(timeout()), this, SLOT(onControlsTimeout()));
     connect(_controls, SIGNAL(showOptions()), this, SLOT(onOpenFile()));
     connect(_controls, SIGNAL(setFullScreen()), this, SLOT(onSetFullScreen()));
+    connect(_controls, SIGNAL(setMute(bool)), _videoplayer, SLOT(setMute(bool)));
     connect(_controls,SIGNAL(play()), _videoplayer, SLOT(play()));
     connect(_controls, SIGNAL(pause()), _videoplayer, SLOT(pause()));
+    connect(_controls, SIGNAL(setVolume(int)), _videoplayer, SLOT(setVolume(int)));
     connect(_videoplayer, SIGNAL(durationChanged(qint64)), _controls, SLOT(durationChanged(qint64)));
     connect(_videoplayer, SIGNAL(positionChanged(qint64)), _controls, SLOT(positionChanged(qint64)));
     connect(_videoplayer, SIGNAL(fpsChanged(QString)), this, SLOT(fpsChanged(QString)));
@@ -56,7 +58,10 @@ Player::Player(QWidget *parent) :
 
     // Start timers
     _cpuTimer->start(1000);
-    _hideControlsTimer->start(_hideTimeout * 1000);
+    _hideControlsTimer->start(_hideTimeout * 800);
+
+    if(!(flPath.isEmpty()))
+        _videoplayer->setMedia(flPath);
 }
 
 Player::~Player()
@@ -84,9 +89,9 @@ void Player::setUpPlayControls(){
     _openFileDialog->setStyleSheet("background-color: rgba(255,255,255,50);");
 
     // Disable seeking
-    _controls->allowSeek(false);
+//    _controls->allowSeek(false);
     // Disable volume controls as we are not playing audio
-    _controls->enableVolumeControl(false);
+    _controls->enableVolumeControl(true);
 }
 
 void Player::setUpFpsLabel(){
@@ -104,7 +109,7 @@ void Player::updateCPUusage(){
 
 /* Update perf information */
 void Player::fpsChanged(QString perf){
-    this->_fpsL->setText(perf);
+    _fpsL->setText(perf);
 }
 
 /* Hide controls when fullscreen button pressed*/
@@ -113,19 +118,23 @@ void Player::onSetFullScreen(){
     if(! _toolBar->isHidden()){
         _hideControlsTimer->stop();
         _toolBar->hide();
+        _fpsL->hide();
     }
 }
 
 /* Hide controls after some time with no mouse activity  */
 void Player::onControlsTimeout(){
-    if(! _toolBar->isHidden())
+    if(! _toolBar->isHidden()){
         _toolBar->hide();
+        _fpsL->hide();
+    }
 }
 
 /* Show controls on mouse Click*/
 void Player::mousePressEvent(QMouseEvent *){
     if(_toolBar->isHidden()){ // Show controls if hidden
        _toolBar->show();
+       _fpsL->show();
        _hideControlsTimer->start(_hideTimeout * 1000);
     }
 }
@@ -133,6 +142,7 @@ void Player::mousePressEvent(QMouseEvent *){
 void Player::mouseMoveEvent(QMouseEvent *){
     if(_toolBar->isHidden() && _hideControlsTimer->isActive()){ // Show controls if hidden
         _toolBar->show();
+        _fpsL->show();
     }
     if(_hideControlsTimer->isActive()) _hideControlsTimer->start(_hideTimeout * 1000); //restart timer
 }
@@ -142,10 +152,17 @@ void Player::onOpenFile(){
     QString filename;
     _openFileDialog->setWindowFlags(Qt::FramelessWindowHint);
     _openFileDialog->setGeometry(QApplication::desktop()->screenGeometry());
+    if(! _toolBar->isHidden()){
+        _toolBar->hide();
+        _fpsL->hide();
+    }
+
     if(_openFileDialog->exec()){
         filename = _openFileDialog->selectedFiles().first();
         _videoplayer->pause();
         _videoplayer->setMedia(filename);
+        _videoplayer->setVolume(_controls->getCurrentVolume());
+        _videoplayer->setMute(_controls->getCurrentMute());
         _videoplayer->play();
     }
 }

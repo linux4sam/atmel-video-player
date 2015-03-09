@@ -38,5 +38,7 @@ configfile.path = /opt/ApplicationLauncher/applications/xml
 configfile.files = configs/7-atmel-video-player.xml
 imagefile.path = /opt/ApplicationLauncher/applications/resources
 imagefile.files = configs/atmel-video-player.png
-INSTALLS += target configfile imagefile
+mediafiles.path = /opt/VideoPlayer/media
+mediafiles.files = media/Tech_on_Tour-Atmel_Launches_Mobile_Trailer.mp4 media/Tech_on_Tour-Atmel_Visits_Washington_DC.mp4
+INSTALLS += target configfile imagefile mediafiles
 

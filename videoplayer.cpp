@@ -11,10 +11,12 @@
 // NOTE: this class is using gstreamer naming convention
 
 #include "videoplayer.h"
+#include <QDebug>
 
 #define SRC_NAME "srcVideo"
 #define PERF_NAME "perf"
 #define PROGRESS_NAME "progress"
+#define VOLUME_NAME "volume"
 #define PIPE "uridecodebin expose-all-streams=false name=" SRC_NAME " \
 caps=video/x-h264;audio/x-raw " SRC_NAME ". ! queue ! h264parse ! \
 queue ! g1h264dec ! video/x-raw,width=800,height=480 ! \
@@ -22,6 +24,7 @@ progressreport silent=true do-query=true update-freq=1 format=time \
 name=" PROGRESS_NAME " ! perf name=" PERF_NAME " ! \
 g1fbdevsink zero-memcpy=true max-lateness=-1 async=false \
 enable-last-sample=false " SRC_NAME ". ! queue ! audioconvert ! \
+audio/x-raw,format=S16LE ! volume name=" VOLUME_NAME " ! queue ! \
 alsasink async=false enable-last-sample=false"
 
 
@@ -30,7 +33,7 @@ busCallback (GstBus *bus,
 	     GstMessage *message,
 	     gpointer    data)
 {
-  VideoPlayer *_this = (VideoPlayer *)data;
+  VideoPlayer* _this = (VideoPlayer *)data;
 
   switch (GST_MESSAGE_TYPE (message)) {
     case GST_MESSAGE_ERROR: {
@@ -46,7 +49,7 @@ busCallback (GstBus *bus,
       break;
     }
     case GST_MESSAGE_EOS:
-      /* end-of-stream */
+      /// end-of-stream
       break;
     case GST_MESSAGE_ELEMENT:{
       const GstStructure *info =  gst_message_get_structure (message);
@@ -57,47 +60,47 @@ busCallback (GstBus *bus,
           gint64 total = 0;
 
 	  vtotal = gst_structure_get_value (info, "total");
-	  total = g_value_get_int64(vtotal);
+      total = g_value_get_int64(vtotal);
 	  vcurrent = gst_structure_get_value (info, "current");
-	  current = g_value_get_int64(vcurrent);
+      current = g_value_get_int64(vcurrent);
 
-	  emit _this->positionChanged(current);
-	  emit _this->durationChanged(total);
+      emit _this->positionChanged(current);
+      emit _this->durationChanged(total);
       }
       break;
     }
     case GST_MESSAGE_INFO: {
       if (!strncmp(GST_MESSAGE_SRC_NAME(message), PERF_NAME, 1)) {
-	GError *error = NULL;
-	gchar *debug = NULL;
-	gchar *bps = NULL;
-	gchar *fps = NULL;
-	gchar *perf = NULL;
-	
-	gst_message_parse_info (message, &error, &debug);
+        GError *error = NULL;
+        gchar *debug = NULL;
+        gchar *bps = NULL;
+        gchar *fps = NULL;
+        gchar *perf = NULL;
 
-	fps = g_strrstr (debug, "fps: ") + 5;
-    g_debug ("Frames per second: %s\n", fps);
+        gst_message_parse_info (message, &error, &debug);
 
-	/* Hack to save up a little performance and tell strrstr to stop 
-	 * instead of doing an auxiliary search
-	 */
-	*((gchar *)(fps-7)) = '\0';
-	bps = g_strrstr (debug, "Bps: ") + 5;
-    g_debug ("Bytes per second: %s\n", bps);
+        fps = g_strrstr (debug, "fps: ") + 5;
+        g_debug ("Frames per second: %s\n", fps);
 
-    perf = g_strdup_printf ("Video Statistics\n\nfps: %s\n\n"
-                "bps: %s", fps, bps);
-	emit _this->fpsChanged(QString::fromStdString(perf));	
+        /* Hack to save up a little performance and tell strrstr to stop
+         * instead of doing an auxiliary search
+         */
+        *((gchar *)(fps-7)) = '\0';
+        bps = g_strrstr (debug, "Bps: ") + 5;
+        g_debug ("Bytes per second: %s\n", bps);
 
-	g_error_free (error);
-	g_free (debug);
-	g_free (perf);
+        perf = g_strdup_printf ("Video Statistics\n\nfps: %s\n\n"
+                    "bps: %s", fps, bps);
+        emit _this->fpsChanged(QString::fromStdString(perf));
+
+        g_error_free (error);
+        g_free (debug);
+        g_free (perf);
       }
     }
     break;
     default:
-      /* unhandled message */
+      // unhandled message
       break;
   }
 
@@ -114,6 +117,7 @@ VideoPlayer::VideoPlayer()
 
     this->_videoPipeline = NULL;
     this->_src = NULL;
+    this->_volume = NULL;
 }
 
 bool
@@ -139,11 +143,98 @@ VideoPlayer::createPipeline(){
         return false;
     }
 
+    this->_volume = gst_bin_get_by_name(GST_BIN(this->_videoPipeline), VOLUME_NAME);
+    if (!this->_volume) {
+        this->_volume = NULL;
+        printf("failed to get volume element...\n");
+        return false;
+    }
+
     bus = gst_pipeline_get_bus (GST_PIPELINE (this->_videoPipeline));
     bus_watch_id = gst_bus_add_watch (bus, &busCallback, this);
     gst_object_unref (bus);
 
     return true;
+}
+
+gboolean VideoPlayer::BusCallback(GstBus*, GstMessage* message, gpointer self) {
+
+        VideoPlayer* player = reinterpret_cast<VideoPlayer*>(self);
+
+        qWarning() << ".../";
+
+        switch (GST_MESSAGE_TYPE (message)) {
+          case GST_MESSAGE_ERROR: {
+            GError *err;
+            gchar *debug;
+
+            gst_message_parse_error (message, &err, &debug);
+            g_print ("Error: %s\n", err->message);
+            g_error_free (err);
+            g_free (debug);
+
+           // g_main_loop_quit (loop);
+            break;
+          }
+          case GST_MESSAGE_EOS:
+            /* end-of-stream */
+            break;
+          case GST_MESSAGE_ELEMENT:{
+            const GstStructure *info =  gst_message_get_structure (message);
+            if(gst_structure_has_name(info, PROGRESS_NAME)){
+            const GValue *vcurrent;
+                gint64 current = 0;
+            const GValue *vtotal;
+                gint64 total = 0;
+
+            vtotal = gst_structure_get_value (info, "total");
+            total = g_value_get_int64(vtotal);
+            vcurrent = gst_structure_get_value (info, "current");
+            current = g_value_get_int64(vcurrent);
+
+            emit player->positionChanged(current);
+            emit player->durationChanged(total);
+            }
+            break;
+          }
+          case GST_MESSAGE_INFO: {
+            if (!strncmp(GST_MESSAGE_SRC_NAME(message), PERF_NAME, 1)) {
+              GError *error = NULL;
+              gchar *debug = NULL;
+              gchar *bps = NULL;
+              gchar *fps = NULL;
+              gchar *perf = NULL;
+
+              gst_message_parse_info (message, &error, &debug);
+
+              fps = g_strrstr (debug, "fps: ") + 5;
+              g_debug ("Frames per second: %s\n", fps);
+
+              /* Hack to save up a little performance and tell strrstr to stop
+               * instead of doing an auxiliary search
+               */
+              *((gchar *)(fps-7)) = '\0';
+              bps = g_strrstr (debug, "Bps: ") + 5;
+              g_debug ("Bytes per second: %s\n", bps);
+
+              perf = g_strdup_printf ("Video Statistics\n\nfps: %s\n\n"
+                          "bps: %s", fps, bps);
+              emit player->fpsChanged(QString::fromStdString(perf));
+              qWarning() << fps << "\n";
+
+              g_error_free (error);
+              g_free (debug);
+              g_free (perf);
+            }
+          }
+          break;
+          default:
+            /* unhandled message */
+            break;
+        }
+
+        return FALSE;
+
 }
 
 void
@@ -182,6 +273,21 @@ bool VideoPlayer::setMedia(QString uri){
     return true;
 }
 
+bool VideoPlayer::setMute(bool mute) {
+     if (!this->_volume)
+        return false;
+
+     g_object_set(this->_volume, "mute", mute, NULL);
+     return true;
+}
+
+bool VideoPlayer::setVolume(int volume) {
+     if (!this->_volume)
+        return false;
+
+     g_object_set(this->_volume, "volume", volume/100.0, NULL);
+     return true;
+}
 
 bool VideoPlayer::setState(GstState state){
     GstStateChangeReturn ret;

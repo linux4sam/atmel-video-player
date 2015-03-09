@@ -23,6 +23,8 @@
 #include "videoplayer.h"
 
 
+#include <QDebug>
+
 /**
  * @file player.h
  * @brief Video player main class implementation
@@ -53,7 +55,7 @@ class Player : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit Player(QWidget *parent = 0);
+    explicit Player(QString flPath, QWidget *parent = 0);
     ~Player();
 
 private:
