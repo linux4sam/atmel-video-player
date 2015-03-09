@@ -13,8 +13,16 @@
 #include "videoplayer.h"
 
 #define SRC_NAME "srcVideo"
-#define PIPE "uridecodebin name=" SRC_NAME " uri=file:///videos/pdahd.h264.800x480.noaudio.avi caps=video/x-h264,stream-format=byte-stream,alignment=au ! \
-h264parse ! g1h264dec ! video/x-raw,width=800,height=480,framerate=3000/1001 ! progressreport silent=true do-query=true update-freq=1 format=time name=progress ! perf name=p ! identity sync=true ! fbdevsink sync=false"
+#define PERF_NAME "perf"
+#define PROGRESS_NAME "progress"
+#define PIPE "uridecodebin expose-all-streams=false name=" SRC_NAME " \
+caps=video/x-h264;audio/x-raw " SRC_NAME ". ! queue ! h264parse ! \
+queue ! g1h264dec ! video/x-raw,width=800,height=480 ! \
+progressreport silent=true do-query=true update-freq=1 format=time \
+name=" PROGRESS_NAME " ! perf name=" PERF_NAME " ! \
+g1fbdevsink zero-memcpy=true max-lateness=-1 async=false \
+enable-last-sample=false " SRC_NAME ". ! queue ! audioconvert ! \
+alsasink async=false enable-last-sample=false"
 
 
 static gboolean
@@ -42,7 +50,7 @@ busCallback (GstBus *bus,
       break;
     case GST_MESSAGE_ELEMENT:{
       const GstStructure *info =  gst_message_get_structure (message);
-      if(gst_structure_has_name(info, "progress")){
+      if(gst_structure_has_name(info, PROGRESS_NAME)){
 	  const GValue *vcurrent;
           gint64 current = 0;
 	  const GValue *vtotal;
@@ -59,7 +67,7 @@ busCallback (GstBus *bus,
       break;
     }
     case GST_MESSAGE_INFO: {
-      if (!strncmp(GST_MESSAGE_SRC_NAME(message), "p", 1)) {
+      if (!strncmp(GST_MESSAGE_SRC_NAME(message), PERF_NAME, 1)) {
 	GError *error = NULL;
 	gchar *debug = NULL;
 	gchar *bps = NULL;
