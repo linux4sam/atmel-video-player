@@ -48,7 +48,7 @@ public slots:
      * @brief play Send pipeline to play state
      * @return  true if success
      */
-    bool play();
+    bool play(bool mute,int volume);
     /**
      * @brief pause Send Pipeline to pause state
      * @return true is success
@@ -77,7 +77,7 @@ public slots:
 private:
     GstElement *_videoPipeline;      // Video Pipeline
     GstElement *_src;                // Source element
-    GstElement *_volume;            // Volume controller
+    GstElement *_volume;             // Volume controller
 
     bool setState(GstState state);
     bool createPipeline();

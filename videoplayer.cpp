@@ -201,9 +201,11 @@ VideoPlayer::~VideoPlayer(){
     destroyPipeline();
 }
 
-bool VideoPlayer::play(){
+bool VideoPlayer::play(bool mute,int volume){
 
     emit playState(this->setState(GST_STATE_PLAYING));
+    setVolume(volume);
+    setMute(mute);
 }
 
 bool VideoPlayer::pause(){
@@ -241,6 +243,7 @@ bool VideoPlayer::setMute(bool mute) {
 
 bool VideoPlayer::setState(GstState state){
     GstStateChangeReturn ret;
+
     if(this->_videoPipeline){
         ret = gst_element_set_state(this->_videoPipeline, state);
         if (GST_STATE_CHANGE_FAILURE == ret) {

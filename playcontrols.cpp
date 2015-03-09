@@ -57,8 +57,8 @@ PlayControls::~PlayControls()
 /* Set Play/pause state */
 void PlayControls::on_PlayPause_clicked()
 {
-    if(_onPlay) emit pause();   // Pipeline is playing
-    else emit play();           // Pipeline is paused
+    if(_onPlay) emit pause();                                       // Pipeline is playing
+    else emit play(_onMute, ui->volumeControl->value());           // Pipeline is paused
 }
 
 /* Set Mute/unmute state */
@@ -142,6 +142,7 @@ void PlayControls::setPlayState(int state){
         _onPlay = 0;
         this->setPlayIcon(0);
         ui->muteButton->setIcon(QIcon(MUTE_IMG));
+        _onMute = false;
         ui->mediaPosition->setEnabled(_onPlay && _allowSeek); // Enable/Disable seeking
     }
 }
@@ -158,7 +159,7 @@ void PlayControls::enableVolumeControl(bool enable){
 }
 
 int PlayControls::getCurrentVolume() {
-  return ui->volumeControl->value();
+    return ui->volumeControl->value();
 }
 
 bool PlayControls::getCurrentMute() {

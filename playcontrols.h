@@ -67,7 +67,7 @@ public:
     bool getCurrentMute();
 
 signals:
-    void play();
+    void play(bool mute,int volume);
     void pause();
     void setMute(bool mute);
     void setVolume(int volume);

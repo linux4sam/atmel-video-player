@@ -46,7 +46,7 @@ Player::Player(QWidget *parent) :
     connect(_hideControlsTimer, SIGNAL(timeout()), this, SLOT(onControlsTimeout()));
     connect(_controls, SIGNAL(showOptions()), this, SLOT(onOpenFile()));
     connect(_controls, SIGNAL(setFullScreen()), this, SLOT(onSetFullScreen()));
-    connect(_controls,SIGNAL(play()), _videoplayer, SLOT(play()));
+    connect(_controls,SIGNAL(play(bool,int)), _videoplayer, SLOT(play(bool,int)));
     connect(_controls, SIGNAL(pause()), _videoplayer, SLOT(pause()));
     connect(_controls, SIGNAL(setVolume(int)), _videoplayer, SLOT(setVolume(int)));
     connect(_controls, SIGNAL(setMute(bool)), _videoplayer, SLOT(setMute(bool)));
@@ -63,7 +63,7 @@ Player::Player(QWidget *parent) :
 //    _hideControlsTimer->start(_hideTimeout * 1000);
 
     _videoplayer->setMedia(QString("/opt/VideoPlayer/media/Tech_on_Tour-Atmel_Visits_Washington_DC.mp4"));
-    _videoplayer->play();
+    _videoplayer->play(_controls->getCurrentMute(), _controls->getCurrentVolume());
 }
 
 Player::~Player()
@@ -181,9 +181,8 @@ void Player::onOpenFile(){
         filename = _openFileDialog->selectedFiles().first();
         _videoplayer->pause();
         _videoplayer->setMedia(filename);
-        _videoplayer->setVolume(_controls->getCurrentVolume());
-        _videoplayer->setMute(_controls->getCurrentMute());
-        _videoplayer->play();
+        _videoplayer->play(_controls->getCurrentMute(), _controls->getCurrentVolume());
+
     }
 }
 
