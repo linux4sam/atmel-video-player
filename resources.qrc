@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/playcontrols">
+        <file>images/Play.png</file>
+        <file>images/ControlBar.png</file>
+        <file>images/speaker.png</file>
+        <file>images/speaker_mute.png</file>
+        <file>images/bg.png</file>
+        <file>images/window_fullscreen.png</file>
+        <file>images/Pause.png</file>
+        <file>images/Options.png</file>
+        <file>images/Options2.png</file>
+        <file>images/exit-button.png</file>
+    </qresource>
+</RCC>
