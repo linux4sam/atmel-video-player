@@ -60,19 +60,19 @@ busCallback (GstBus *bus,
     }
     case GST_MESSAGE_EOS:{
         /// end-of-stream
-#ifdef PLANA
+#if defined PLANA || defined PLAND
           gchar *perf = NULL;
           perf = g_strdup_printf ("Video Statistics\n\nfps: 0\n\n"
-                      "bps: 0");
+                      "bps (Mbit/s): 0");
           emit _this->fpsChanged(QString::fromStdString(perf));
 #endif //PLANA
-          emit _this->playState(0);
+          emit _this->playState(5);
           _this->setMedia(QString("/opt/VideoPlayer/media/Tech_on_Tour-Atmel_Visits_Washington_DC.mp4"));
 
       break;
     }
     case GST_MESSAGE_ELEMENT:{
-#ifdef PLANA
+#if defined PLANA || defined PLAND
       const GstStructure *info =  gst_message_get_structure (message);
       if(gst_structure_has_name(info, PROGRESS_NAME)){
 	  const GValue *vcurrent;
@@ -93,13 +93,14 @@ busCallback (GstBus *bus,
       break;
     }
     case GST_MESSAGE_INFO: {
-#ifdef PLANA
+#if defined PLANA || defined PLAND
       if (!strncmp(GST_MESSAGE_SRC_NAME(message), PERF_NAME, 1)) {
 	GError *error = NULL;
 	gchar *debug = NULL;
 	gchar *bps = NULL;
 	gchar *fps = NULL;
 	gchar *perf = NULL;
+	int bpsi;
 	
 	gst_message_parse_info (message, &error, &debug);
 
@@ -112,9 +113,10 @@ busCallback (GstBus *bus,
 	*((gchar *)(fps-7)) = '\0';
 	bps = g_strrstr (debug, "Bps: ") + 5;
     g_debug ("Bytes per second: %s\n", bps);
-
+        bpsi = atoi(bps);
+	bpsi = bpsi/1000000;
     perf = g_strdup_printf ("Video Statistics\n\nfps: %s\n\n"
-                "bps: %s", fps, bps);
+                "bps (Mbit/s): %d", fps, bpsi);
 	emit _this->fpsChanged(QString::fromStdString(perf));	
 
 	g_error_free (error);

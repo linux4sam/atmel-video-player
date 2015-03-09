@@ -28,7 +28,7 @@
      <height>80</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="layout" stretch="1,10,0,1,2,1,1,0">
+   <layout class="QHBoxLayout" name="layout" stretch="1,10,0,1,0,1,1,0">
     <property name="bottomMargin">
      <number>12</number>
     </property>
@@ -67,24 +67,11 @@
        <string/>
       </property>
       <property name="styleSheet">
-       <string notr="true"> QSlider::groove:horizontal {
-     /*border: 1px solid #999999;*/
-     height: 4px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
-     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
-     margin: 2px 0;
- }
-QSlider::handle:horizontal{
-    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #DFDFDF, stop: 0.5 #7E7E7E, stop:1 #BCBCBC);
-	margin: -5px 0;
-    border-radius: 5px;
-	border: 1px solid rgb(208, 204, 204);
-	width: 20px
-}
-QSlider::add-page:horizontal {
-    background: rgb(0, 0, FF)
+       <string notr="true">QSlider::add-page:horizontal {
+    background: rgb(230,230, 230)
 }
 QSlider::sub-page:horizontal{
-    background: rgb(0, 0, 0)
+    background: rgb(230, 230, 230)
 }</string>
       </property>
       <property name="orientation">
@@ -94,6 +81,9 @@ QSlider::sub-page:horizontal{
     </item>
     <item>
      <widget class="QLabel" name="positioLabel">
+      <property name="styleSheet">
+       <string notr="true">color: #c5c5c5</string>
+      </property>
       <property name="text">
        <string>0/0</string>
       </property>
@@ -147,11 +137,12 @@ QSlider::sub-page:horizontal{
       </property>
       <property name="styleSheet">
        <string notr="true"> QSlider::groove:horizontal {
-     /*border: 1px solid #999999;*/
-     height: 4px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
-     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
-     margin: 2px 0;
+     border: 1px solid #999999;
+     height: 2px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+     background: #e5e5e5;
+ /*    margin: 2px 0;*/
  }
+
 QSlider::handle:horizontal{
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #DFDFDF, stop: 0.5 #7E7E7E, stop:1 #BCBCBC);
 	margin: -20px 0;
@@ -161,10 +152,10 @@ QSlider::handle:horizontal{
     height: 40px;
 }
 QSlider::add-page:horizontal {
-    background: rgb(0, 0, 0)
+    background: rgb(230,230, 230)
 }
 QSlider::sub-page:horizontal{
-    background: rgb(0, 0, 0)
+    background: rgb(230, 230, 230)
 }</string>
       </property>
       <property name="maximum">
@@ -211,10 +202,11 @@ QSlider::sub-page:horizontal{
      border: 2px solid grey;
      border-radius: 5px;
 	 text-align: center;
+     color: #c5c5c5;
  }
 
  QProgressBar::chunk {
-     background-color:  #00DD00;
+     background-color:  #827f00;
  }</string>
       </property>
       <property name="value">

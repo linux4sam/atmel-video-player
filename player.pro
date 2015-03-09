@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = player
 TEMPLATE = app
 
-DEFINES += PLANC
+DEFINES += PLANA 
 
 SOURCES += main.cpp\
         player.cpp \

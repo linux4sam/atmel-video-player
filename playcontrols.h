@@ -97,7 +97,7 @@ public slots:
       *
       * @param state true = onPlay, false = onPause
       */
-    void setPlayState(bool state);
+    void setPlayState(int state);
 
 private:
     Ui::PlayControls *ui;

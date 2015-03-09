@@ -35,7 +35,7 @@ PlayControls::PlayControls(QWidget *parent) :
     connect(ui->mediaPosition, SIGNAL(sliderMoved(int)), this, SIGNAL(positionChanged(int)));
     connect(ui->optionsButtonn, SIGNAL(clicked()), this, SIGNAL(showOptions()));
 
-#ifndef PLANA
+#if !defined PLANA && !defined PLAND 
     ui->mediaPosition->hide();    
     ui->positioLabel->hide();
 #endif
@@ -133,10 +133,17 @@ void PlayControls::setPlayIcon(bool state){
 }
 
 /* Update the _onPlay flag and play button icon */
-void PlayControls::setPlayState(bool state){
-    _onPlay =state;
-    this->setPlayIcon(state);
-    ui->mediaPosition->setEnabled(_onPlay && _allowSeek); // Enable/Disable seeking
+void PlayControls::setPlayState(int state){
+    if(state < 2){
+        _onPlay =state;
+        this->setPlayIcon(state);
+        ui->mediaPosition->setEnabled(_onPlay && _allowSeek); // Enable/Disable seeking
+    }else{
+        _onPlay = 0;
+        this->setPlayIcon(0);
+        ui->muteButton->setIcon(QIcon(MUTE_IMG));
+        ui->mediaPosition->setEnabled(_onPlay && _allowSeek); // Enable/Disable seeking
+    }
 }
 
 /* Seek  */
