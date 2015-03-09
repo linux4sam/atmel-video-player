@@ -9,6 +9,5 @@
         <file>images/Pause.png</file>
         <file>images/Options.png</file>
         <file>images/Options2.png</file>
-        <file>images/exit-button.png</file>
     </qresource>
 </RCC>

@@ -35,7 +35,17 @@ PlayControls::PlayControls(QWidget *parent) :
     connect(ui->mediaPosition, SIGNAL(sliderMoved(int)), this, SIGNAL(positionChanged(int)));
     connect(ui->optionsButtonn, SIGNAL(clicked()), this, SIGNAL(showOptions()));
 
-
+#ifndef PLANA
+    ui->mediaPosition->hide();    
+    ui->positioLabel->hide();
+#endif
+#if !defined PLANA && !defined PLANC
+    ui->muteButton->hide();
+    ui->volumeControl->hide();
+#endif
+#ifdef PLANC
+    ui->cpuUsage->hide();
+#endif
 }
 
 PlayControls::~PlayControls()
@@ -142,11 +152,6 @@ void PlayControls::enableVolumeControl(bool enable){
 
 int PlayControls::getCurrentVolume() {
   return ui->volumeControl->value();
-}
-
-void PlayControls::on_exitButton_clicked()
-{
-    qApp->exit();
 }
 
 bool PlayControls::getCurrentMute() {

@@ -23,8 +23,6 @@
 #include "videoplayer.h"
 
 
-#include <QDebug>
-
 /**
  * @file player.h
  * @brief Video player main class implementation
@@ -55,7 +53,7 @@ class Player : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit Player(QString flPath, QWidget *parent = 0);
+    explicit Player(QWidget *parent = 0);
     ~Player();
 
 private:
@@ -85,6 +83,9 @@ private slots:
     void onControlsTimeout();
     void onSetFullScreen();
     void onOpenFile();
+
+protected:
+    void keyPressEvent( QKeyEvent * );
 
 };
 

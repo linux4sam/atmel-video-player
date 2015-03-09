@@ -21,6 +21,7 @@
  * @brief Player  gstreamer class
  */
 
+
 class VideoPlayer : public QObject
 {
     Q_OBJECT
@@ -58,8 +59,20 @@ public slots:
      * @return true if success
      */
     bool null();
-    bool setMute(bool mute);
+
+    /**
+     * @brief Adjusts the volume of the audio in the video being played
+     * @param volume desired volume in the range of 0 (no sound) to 100 (normal sound)
+     * @return true if success
+     */
     bool setVolume(int volume);
+
+    /**
+     * @brief Mutes the audio of the video being played
+     * @param mute true if the audio is to be muted
+     * @return true if success
+     */
+    bool setMute(bool mute);
 
 private:
     GstElement *_videoPipeline;      // Video Pipeline
@@ -69,9 +82,6 @@ private:
     bool setState(GstState state);
     bool createPipeline();
     void destroyPipeline();
-
-    static gboolean BusCallback(GstBus*, GstMessage*, gpointer);
-    static void HandleMessage(GstMessage* message, gpointer);
 
 };
 

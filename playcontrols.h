@@ -91,8 +91,6 @@ private slots:
 
     void on_fullScreenButtonn_clicked();
 
-    void on_exitButton_clicked();
-
 public slots:
     /**
       * @brief set the controls to the current play state

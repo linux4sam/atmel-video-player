@@ -11,9 +11,7 @@
 #include "player.h"
 #include "ui_player.h"
 
-#include <QDesktopWidget>
-
-Player::Player(QString flPath, QWidget *parent) :
+Player::Player(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Player),
     _hideTimeout(10)
@@ -37,17 +35,20 @@ Player::Player(QString flPath, QWidget *parent) :
 
     // Setup controls
     setUpPlayControls();
+
+#ifdef PLANA
     setUpFpsLabel();
+#endif
 
     // Connect signals
     connect(_cpuTimer, SIGNAL(timeout()), this, SLOT(updateCPUusage()));
     connect(_hideControlsTimer, SIGNAL(timeout()), this, SLOT(onControlsTimeout()));
     connect(_controls, SIGNAL(showOptions()), this, SLOT(onOpenFile()));
     connect(_controls, SIGNAL(setFullScreen()), this, SLOT(onSetFullScreen()));
-    connect(_controls, SIGNAL(setMute(bool)), _videoplayer, SLOT(setMute(bool)));
     connect(_controls,SIGNAL(play()), _videoplayer, SLOT(play()));
     connect(_controls, SIGNAL(pause()), _videoplayer, SLOT(pause()));
     connect(_controls, SIGNAL(setVolume(int)), _videoplayer, SLOT(setVolume(int)));
+    connect(_controls, SIGNAL(setMute(bool)), _videoplayer, SLOT(setMute(bool)));
     connect(_videoplayer, SIGNAL(durationChanged(qint64)), _controls, SLOT(durationChanged(qint64)));
     connect(_videoplayer, SIGNAL(positionChanged(qint64)), _controls, SLOT(positionChanged(qint64)));
     connect(_videoplayer, SIGNAL(fpsChanged(QString)), this, SLOT(fpsChanged(QString)));
@@ -58,10 +59,9 @@ Player::Player(QString flPath, QWidget *parent) :
 
     // Start timers
     _cpuTimer->start(1000);
-    _hideControlsTimer->start(_hideTimeout * 800);
+//    _hideControlsTimer->start(_hideTimeout * 1000);
 
-    if(!(flPath.isEmpty()))
-        _videoplayer->setMedia(flPath);
+    _videoplayer->setMedia(QString("/opt/VideoPlayer/media/Tech_on_Tour-Atmel_Launches_Mobile_Trailer.mp4"));
 }
 
 Player::~Player()
@@ -86,16 +86,16 @@ void Player::setUpPlayControls(){
     _openFileDialog->setFileMode(QFileDialog::ExistingFile);
     _openFileDialog->setNameFilter(filter);
     _openFileDialog->setDirectory("/opt/VideoPlayer/media");
-    _openFileDialog->setStyleSheet("background-color: rgba(255,255,255,50);");
+    _openFileDialog->setStyleSheet("background-color: rgba(255,255,255,50); font-size: 12px; font-family: 'Arial'");
 
     // Disable seeking
-//    _controls->allowSeek(false);
+    _controls->allowSeek(false);
     // Disable volume controls as we are not playing audio
     _controls->enableVolumeControl(true);
 }
 
 void Player::setUpFpsLabel(){
-    _fpsL->setStyleSheet("QLabel { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B0CACACA, stop: 0.5 #B0808080, stop:1 #B0CACACA); font: 75 16pt KacstOne; border-radius: 20px; border: 2px solid #0A0750;}");
+    _fpsL->setStyleSheet("QLabel { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B0CACACA, stop: 0.5 #B0808080, stop:1 #B0CACACA); font: 75 16pt KacstOne; border-radius: 20px;}");
     _fpsL->setMargin(10);
     _fpsL->setText("Video Statistics\n\nfps:\n\nbps:");
     _fpsL->setGeometry(10, 10, 150, 120);
@@ -109,14 +109,14 @@ void Player::updateCPUusage(){
 
 /* Update perf information */
 void Player::fpsChanged(QString perf){
-    _fpsL->setText(perf);
+    this->_fpsL->setText(perf);
 }
 
 /* Hide controls when fullscreen button pressed*/
 void Player::onSetFullScreen(){
     // Just hide controls as we are already on full screen mode
     if(! _toolBar->isHidden()){
-        _hideControlsTimer->stop();
+//        _hideControlsTimer->stop();
         _toolBar->hide();
         _fpsL->hide();
     }
@@ -124,39 +124,41 @@ void Player::onSetFullScreen(){
 
 /* Hide controls after some time with no mouse activity  */
 void Player::onControlsTimeout(){
-    if(! _toolBar->isHidden()){
+/*    if(! _toolBar->isHidden())
         _toolBar->hide();
+    if(! _fpsL->isHidden())
         _fpsL->hide();
-    }
+    _hideControlsTimer->stop();*/
+
 }
 
 /* Show controls on mouse Click*/
 void Player::mousePressEvent(QMouseEvent *){
     if(_toolBar->isHidden()){ // Show controls if hidden
        _toolBar->show();
-       _fpsL->show();
-       _hideControlsTimer->start(_hideTimeout * 1000);
+//       _hideControlsTimer->start(_hideTimeout * 1000);
     }
+#ifdef PLANA
+    if(_fpsL->isHidden())
+           _fpsL->show();
+#endif
 }
 
 void Player::mouseMoveEvent(QMouseEvent *){
-    if(_toolBar->isHidden() && _hideControlsTimer->isActive()){ // Show controls if hidden
+    if(_toolBar->isHidden() && _hideControlsTimer->isActive()) // Show controls if hidden
         _toolBar->show();
-        _fpsL->show();
-    }
+
+#ifdef PLANA
+    if(_fpsL->isHidden())
+           _fpsL->show();
+#endif
+
     if(_hideControlsTimer->isActive()) _hideControlsTimer->start(_hideTimeout * 1000); //restart timer
 }
 
 /* Set player URI */
 void Player::onOpenFile(){
     QString filename;
-    _openFileDialog->setWindowFlags(Qt::FramelessWindowHint);
-    _openFileDialog->setGeometry(QApplication::desktop()->screenGeometry());
-    if(! _toolBar->isHidden()){
-        _toolBar->hide();
-        _fpsL->hide();
-    }
-
     if(_openFileDialog->exec()){
         filename = _openFileDialog->selectedFiles().first();
         _videoplayer->pause();
@@ -164,5 +166,16 @@ void Player::onOpenFile(){
         _videoplayer->setVolume(_controls->getCurrentVolume());
         _videoplayer->setMute(_controls->getCurrentMute());
         _videoplayer->play();
+    }
+}
+
+/***
+ ** Catch the "K1" capacitive button press and close the application
+ **/
+void Player::keyPressEvent( QKeyEvent *k )
+{
+    if(k->key() == 48){
+        onSetFullScreen();
+        qApp->exit();
     }
 }
