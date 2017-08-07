@@ -17,7 +17,7 @@ else
 	#echo "w=${V_WIDTH}, h=${V_HEIGHT}"
 
 	# Hack to prevent the pipeline from being stuck and launch weston & Qtdemo again.
-	(sleep 142 && killall -9 gst-launch-1.0 > /dev/null 2>&1 && /etc/init.d/weston start > /dev/null 2>&1 && sleep 1 &&  /etc/init.d/qtdemo start > /dev/null 2>&1)&
+	(sleep 30 && killall -9 gst-launch-1.0 > /dev/null 2>&1 && /etc/init.d/weston start > /dev/null 2>&1 && sleep 1 &&  /etc/init.d/qtdemo start > /dev/null 2>&1)&
 
 	if [ -d /proc/asound/card0 ]
 	then
