@@ -6,7 +6,7 @@
     <updated>2012-11-01T15:45:05Z</updated>
     <author>Unknown</author>
     <path exec="/opt/ApplicationLauncher/launch.sh" />
-    <arg>/opt/VideoPlayer/Atmel-Video-Player.sh</arg>
+    <arg>/opt/VideoPlayer/Video-Player.sh</arg>
     <description>Test Description</description>
     <link rel="enclosure" type="image/png" href="../../applications/resources/atmel-video-player.png" />
 </entry>
