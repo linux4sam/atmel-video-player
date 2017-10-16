@@ -20,7 +20,9 @@ Player::Player(QWidget *parent) :
     ui->setupUi(this);
 
     // Set transparent background
-    setStyleSheet("background: transparent;");
+    //setStyleSheet("background-color: rgba(0,255,0,55);");
+    setAttribute(Qt::WA_TranslucentBackground);
+    //setWindowFlags(Qt::FramelessWindowHint);
 
     centralWidget()->setMouseTracking(true);
 

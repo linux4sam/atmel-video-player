@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui gui-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -31,14 +31,18 @@ RESOURCES += \
     resources.qrc
 
 CONFIG += link_pkgconfig
-PKGCONFIG += gstreamer-1.0
+PKGCONFIG += gstreamer-1.0 libdrm libplanes
 
 target.path = /opt/VideoPlayer
 target.files = player Atmel-Video-Player.sh
 configfile.path = /opt/ApplicationLauncher/applications/xml
 configfile.files = configs/7-atmel-video-player.xml
+configfile.files += configs/default.config
 imagefile.path = /opt/ApplicationLauncher/applications/resources
 imagefile.files = configs/atmel-video-player.png
 mediafiles.path = /opt/VideoPlayer/media
 mediafiles.files = media/Microchip-masters.mp4
 INSTALLS += target configfile imagefile mediafiles
+
+DISTFILES += \
+    configs/default.config
