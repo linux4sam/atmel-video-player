@@ -60,7 +60,7 @@ Player::Player(QWidget *parent) :
 
     // Start timers
     _cpuTimer->start(1000);
-//    _hideControlsTimer->start(_hideTimeout * 1000);
+    _hideControlsTimer->start(_hideTimeout * 1000);
 
     _videoplayer->setMedia(QString("/opt/VideoPlayer/media/Microchip-masters.mp4"));
     _videoplayer->play(_controls->getCurrentMute(), _controls->getCurrentVolume());
@@ -70,7 +70,6 @@ Player::~Player()
 {
     delete ui;
 }
-
 
 void Player::setUpPlayControls(){
 
@@ -134,7 +133,7 @@ void Player::fpsChanged(QString perf){
 void Player::onSetFullScreen(){
     // Just hide controls as we are already on full screen mode
     if(! _toolBar->isHidden()){
-//        _hideControlsTimer->stop();
+        _hideControlsTimer->stop();
         _toolBar->hide();
         _fpsL->hide();
     }
@@ -142,19 +141,18 @@ void Player::onSetFullScreen(){
 
 /* Hide controls after some time with no mouse activity  */
 void Player::onControlsTimeout(){
-/*    if(! _toolBar->isHidden())
+    if(! _toolBar->isHidden())
         _toolBar->hide();
     if(! _fpsL->isHidden())
         _fpsL->hide();
-    _hideControlsTimer->stop();*/
-
+    _hideControlsTimer->stop();
 }
 
 /* Show controls on mouse Click*/
 void Player::mousePressEvent(QMouseEvent *){
     if(_toolBar->isHidden()){ // Show controls if hidden
        _toolBar->show();
-//       _hideControlsTimer->start(_hideTimeout * 1000);
+       _hideControlsTimer->start(_hideTimeout * 1000);
     }
 #if defined PLANA || defined PLAND
     if(_fpsL->isHidden())
