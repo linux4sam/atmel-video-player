@@ -61,7 +61,7 @@ busCallback (GstBus *bus,
         /// end-of-stream
 #if defined PLANA || defined PLAND
           gchar *perf = NULL;
-          perf = g_strdup_printf ("Video Statistics\n\nfps: 0\n\n"
+          perf = g_strdup_printf ("fps: 0\n"
                       "bps (Mbit/s): 0");
           emit _this->fpsChanged(QString::fromStdString(perf));
 #endif //PLANA
@@ -114,7 +114,7 @@ busCallback (GstBus *bus,
     g_debug ("Bytes per second: %s\n", bps);
         bpsi = atoi(bps);
 	bpsi = bpsi/1000000;
-    perf = g_strdup_printf ("Video Statistics\n\nfps: %s\n\n"
+    perf = g_strdup_printf ("fps: %s\n"
                 "bps (Mbit/s): %d", fps, bpsi);
 	emit _this->fpsChanged(QString::fromStdString(perf));	
 

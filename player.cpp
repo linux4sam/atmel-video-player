@@ -20,9 +20,8 @@ Player::Player(QWidget *parent) :
     ui->setupUi(this);
 
     // Set transparent background
-    //setStyleSheet("background-color: rgba(0,255,0,55);");
     setAttribute(Qt::WA_TranslucentBackground);
-    //setWindowFlags(Qt::FramelessWindowHint);
+    setWindowFlags(Qt::FramelessWindowHint);
 
     centralWidget()->setMouseTracking(true);
 
@@ -79,7 +78,7 @@ void Player::setUpPlayControls(){
 
 #if !DESB
     // Set toolbar background color
-    _toolBar->setStyleSheet("QToolBar { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 black, stop:1 #4c4c4c); border-width: 0px;}");
+    _toolBar->setStyleSheet("QToolBar { background-color: rgba(76,76,76,180); border-width: 0px;}");
 #else
     _toolBar->setStyleSheet("QToolBar { background-color: rgba(255,255,255,50); border-width: 0px; border-radius: 10px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px;}");
 #endif
@@ -111,13 +110,13 @@ void Player::setUpPlayControls(){
 
 void Player::setUpFpsLabel(){
 #if !DESB
-    _fpsL->setStyleSheet("QLabel { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B0CACACA, stop: 0.5 #B0808080, stop:1 #B0CACACA); font: 75 16pt KacstOne; border-radius: 20px;}");
+    _fpsL->setStyleSheet("QLabel { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B0CACACA, stop: 0.5 #B0808080, stop:1 #B0CACACA); font-size: 24px; font-family: 'Arial'; border-radius: 20px;}");
 #else
     _fpsL->setStyleSheet("QLabel { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B0CACACA, stop:1 #B0CACACA); font: 75 16pt KacstOne; border-radius: 10px;}");
 #endif
     _fpsL->setMargin(10);
-    _fpsL->setText("Video Statistics\n\nfps:\n\nbps:");
-    _fpsL->setGeometry(10, 10, 150, 120);
+    _fpsL->setText("fps:\nbps:");
+    _fpsL->setGeometry(10, 10, 200, 80);
 }
 
 /* Update CPU usage widget  */
