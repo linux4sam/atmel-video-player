@@ -62,7 +62,7 @@ Player::Player(QWidget *parent) :
     _cpuTimer->start(1000);
 //    _hideControlsTimer->start(_hideTimeout * 1000);
 
-    _videoplayer->setMedia(QString("/opt/VideoPlayer/media/Tech_on_Tour-Atmel_Visits_Washington_DC.mp4"));
+    _videoplayer->setMedia(QString("/opt/VideoPlayer/media/Microchip-masters.mp4"));
     _videoplayer->play(_controls->getCurrentMute(), _controls->getCurrentVolume());
 }
 
