@@ -67,6 +67,9 @@ Player::Player(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Set full screen
+    showFullScreen();
+
     // Set transparent background
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
@@ -107,9 +110,6 @@ Player::Player(QWidget *parent) :
     connect(_videoplayer, SIGNAL(positionChanged(qint64)), _controls, SLOT(positionChanged(qint64)));
     connect(_videoplayer, SIGNAL(fpsChanged(QString)), this, SLOT(fpsChanged(QString)));
     connect(_videoplayer, SIGNAL(playState(int)), _controls, SLOT(setPlayState(int)));
-
-    // Set full screen
-    this->setWindowState(Qt::WindowFullScreen);
 
     // Start timers
     _cpuTimer->start(1000);
