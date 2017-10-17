@@ -11,6 +11,54 @@
 #include <QDesktopWidget>
 #include "player.h"
 #include "ui_player.h"
+#include <xf86drm.h>
+#include <engine.h>
+#include <qpa/qplatformnativeinterface.h>
+#include <kms.h>
+
+static int get_fd()
+{
+    static int dri_fd = -1;
+    if (dri_fd == -1)
+    {
+        void *p = reinterpret_cast<QApplication*>(QApplication::instance())->platformNativeInterface()->nativeResourceForIntegration("dri_fd");
+        if (p) {
+            dri_fd = (int)(qintptr)p;
+            qDebug("dri fd = %d", dri_fd);
+        } else {
+            qFatal("No dri fd available from platform");
+        }
+    }
+    return dri_fd;
+}
+
+static int setup_planes()
+{
+    int fd = get_fd();
+    if (fd < 0) {
+        fprintf(stderr, "error: no dri fd\n");
+        return -1;
+    }
+
+    struct kms_device* device = kms_device_open(fd);
+    if (!device)
+        return -1;
+
+    struct plane_data* planes = (struct plane_data*)calloc(device->num_planes, sizeof(struct plane_data));
+
+    const char* config_file = "/opt/VideoPlayer/screen.config";
+    uint32_t framedelay;
+    if (parse_config(config_file, device, planes, &framedelay))
+        return -1;
+
+    int gem = 0;
+
+    for (unsigned int x = 0; x < device->num_planes;x++)
+        if (planes[x].gem_name)
+            gem = planes[x].gem_name;
+
+    return gem;
+}
 
 Player::Player(QWidget *parent) :
     QMainWindow(parent),
@@ -25,9 +73,13 @@ Player::Player(QWidget *parent) :
 
     centralWidget()->setMouseTracking(true);
 
+    int gem = setup_planes();
+    if (gem < 0)
+        fprintf(stderr, "error: setup_planes() failed\n");
+
     // initialize variables
     _controls = new PlayControls();
-    _videoplayer = new VideoPlayer();
+    _videoplayer = new VideoPlayer(gem);
     _toolBar = new QToolBar(this);
     _fpsL = new QLabel(this);
     _tools = new Tools;

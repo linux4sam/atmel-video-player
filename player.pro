@@ -34,15 +34,13 @@ CONFIG += link_pkgconfig
 PKGCONFIG += gstreamer-1.0 libdrm libplanes
 
 target.path = /opt/VideoPlayer
-target.files = player Atmel-Video-Player.sh
+target.files = player
+extra.path = /opt/VideoPlayer
+extra.files = Video-Player.sh screen.config
 configfile.path = /opt/ApplicationLauncher/applications/xml
 configfile.files = configs/7-atmel-video-player.xml
-configfile.files += configs/default.config
 imagefile.path = /opt/ApplicationLauncher/applications/resources
 imagefile.files = configs/atmel-video-player.png
 mediafiles.path = /opt/VideoPlayer/media
 mediafiles.files = media/Microchip-masters.mp4
-INSTALLS += target configfile imagefile mediafiles
-
-DISTFILES += \
-    configs/default.config
+INSTALLS += target configfile imagefile mediafiles extra

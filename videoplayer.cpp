@@ -23,7 +23,7 @@ caps=video/x-h264;audio/x-raw " SRC_NAME ". ! queue ! h264parse ! \
 queue ! g1h264dec ! video/x-raw,width=800,height=480 ! \
 progressreport silent=true do-query=true update-freq=1 format=time \
 name=" PROGRESS_NAME " ! perf name=" PERF_NAME " ! \
-drmgemsink gem-name=2 plane-width=800 plane-height=480 " SRC_NAME ". ! queue ! audioconvert ! \
+drmgemsink gem-name=%1 plane-width=800 plane-height=480 " SRC_NAME ". ! queue ! audioconvert ! \
 audio/x-raw,format=S16LE ! volume name=" VOLUME_NAME " ! \
 alsasink async=false enable-last-sample=false"
 #else
@@ -139,7 +139,8 @@ busCallback (GstBus *bus,
   return TRUE;
 }
 
-VideoPlayer::VideoPlayer()
+VideoPlayer::VideoPlayer(int gem)
+        : _gem(gem)
 {
     gst_init(NULL, NULL);
 
@@ -157,7 +158,9 @@ VideoPlayer::createPipeline(){
     /* Make sure we don't leave orphan references */
     destroyPipeline();
 
-    this->_videoPipeline = gst_parse_launch (PIPE, &error);
+    QString pipe(QString(PIPE).arg(_gem));
+    printf("%s\n", pipe.toStdString().c_str());
+    this->_videoPipeline = gst_parse_launch (pipe.toStdString().c_str(), &error);
     if (!this->_videoPipeline) {
         this->_videoPipeline = NULL;
         printf("failed to create video pipeline...\n");
