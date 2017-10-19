@@ -31,7 +31,7 @@ RESOURCES += \
     resources.qrc
 
 CONFIG += link_pkgconfig
-PKGCONFIG += gstreamer-1.0 libdrm libplanes
+PKGCONFIG += gstreamer-1.0 libdrm cairo libplanes
 
 target.path = /opt/VideoPlayer
 target.files = player

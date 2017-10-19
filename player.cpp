@@ -12,9 +12,9 @@
 #include "player.h"
 #include "ui_player.h"
 #include <xf86drm.h>
-#include <engine.h>
 #include <qpa/qplatformnativeinterface.h>
-#include <kms.h>
+#include <planes/engine.h>
+#include <planes/kms.h>
 
 static int get_fd()
 {
@@ -44,18 +44,20 @@ static int setup_planes()
     if (!device)
         return -1;
 
-    struct plane_data* planes = (struct plane_data*)calloc(device->num_planes, sizeof(struct plane_data));
+    struct plane_data** planes = (struct plane_data**)calloc(device->num_planes, sizeof(struct plane_data*));
 
     const char* config_file = "/opt/VideoPlayer/screen.config";
     uint32_t framedelay;
-    if (parse_config(config_file, device, planes, &framedelay))
+    if (engine_load_config(config_file, device, planes, device->num_planes, &framedelay))
         return -1;
 
     int gem = 0;
-
     for (unsigned int x = 0; x < device->num_planes;x++)
-        if (planes[x].gem_name)
-            gem = planes[x].gem_name;
+        if (planes[x] && planes[x]->gem_name)
+            gem = planes[x]->gem_name;
+
+
+    free(planes);
 
     return gem;
 }
