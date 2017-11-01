@@ -1,8 +1,4 @@
 #!/bin/sh
-# Killall weston will kill all the child process including QT Application and this script file
-# executing Player.sh in background to play video file.
 
-(sh /opt/VideoPlayer/Player.sh > /opt/1.txt 2>&1)&
-
-killall -9 weston > /dev/null 2>&1
-
+# close stdout, stderr, stdin and double fork
+((/opt/VideoPlayer/Player.sh >&- 2>&- <&- &)&)

@@ -66,7 +66,7 @@ busCallback (GstBus *bus,
           emit _this->fpsChanged(QString::fromStdString(perf));
 #endif //PLANA
           emit _this->playState(5);
-          _this->setMedia(QString("/opt/VideoPlayer/media/Tech_on_Tour-Atmel_Visits_Washington_DC.mp4"));
+          _this->setMedia(QString("/opt/VideoPlayer/media/Microchip-masters.mp4"));
 
       break;
     }
