@@ -1,7 +1,8 @@
 #!/bin/sh
 
-/etc/init.d/S99demo stop
-/etc/init.d/S90weston stop
+. /opt/ApplicationLauncher/demo.config
+
+eval "$DEMO_LEAVE"
 
 QMLSCENE_DEVICE=softwarecontext \
 QT_LOGGING_RULES=qt.qpa.*=true \
@@ -12,5 +13,4 @@ QT_QPA_FB_DRM_FORMAT=18 \
 /opt/VideoPlayer/player -platform linuxfb -plugin tslib:/dev/input/event1 \
                -plugin evdevkeyboard:/dev/input/event0 $1
 
-/etc/init.d/S90weston start
-/etc/init.d/S99demo start
+eval "$DEMO_ENTER"

@@ -5,8 +5,8 @@
     <published>2012-11-01T15:45:05Z</published>
     <updated>2012-11-01T15:45:05Z</updated>
     <author>Unknown</author>
-    <path exec="/opt/ApplicationLauncher/launch.sh" />
-    <arg>/opt/VideoPlayer/Video-Player.sh</arg>
+    <path exec="/opt/ApplicationLauncher/launch-fork.sh" />
+    <arg>/opt/VideoPlayer/Player.sh</arg>
     <description>Test Description</description>
     <link rel="enclosure" type="image/png" href="../../applications/resources/atmel-video-player.png" />
 </entry>
