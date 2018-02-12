@@ -31,7 +31,7 @@ RESOURCES += \
     resources.qrc
 
 CONFIG += link_pkgconfig
-PKGCONFIG += gstreamer-1.0 libdrm cairo libplanes
+PKGCONFIG += gstreamer-1.0 libplanes libdrm cairo libcjson lua
 
 target.path = /opt/VideoPlayer
 target.files = player
