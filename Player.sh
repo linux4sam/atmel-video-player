@@ -1,11 +1,8 @@
 #!/bin/sh
 
-. /opt/ApplicationLauncher/demo.config
-
 eval "$DEMO_LEAVE"
 
 QMLSCENE_DEVICE=softwarecontext \
-QT_LOGGING_RULES=qt.qpa.*=true \
 QT_QPA_EGLFS_KMS_CONNECTOR_INDEX=0 \
 QT_QPA_EGLFS_KMS_PLANE_INDEX=2 \
 QT_QPA_FB_DRM=1 \
