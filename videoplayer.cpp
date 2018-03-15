@@ -11,6 +11,7 @@
 // NOTE: this class is using gstreamer naming convention
 
 #include "videoplayer.h"
+#include <QDesktopWidget>
 
 #define SRC_NAME "srcVideo"
 #define PERF_NAME "perf"
@@ -20,7 +21,7 @@
 #if defined PLANA || defined PLANC
 #define PIPE "uridecodebin expose-all-streams=false name=" SRC_NAME " \
 caps=video/x-h264;audio/x-raw " SRC_NAME ". ! queue ! h264parse ! \
-queue ! g1h264dec ! video/x-raw,width=800,height=480,format=BGRx ! \
+queue ! g1h264dec ! video/x-raw,width=%2,height=%3,format=BGRx ! \
 progressreport silent=true do-query=true update-freq=1 format=time \
 name=" PROGRESS_NAME " ! perf name=" PERF_NAME " ! \
 g1kmssink gem-name=%1 " SRC_NAME ". ! queue ! audioconvert ! \
@@ -29,7 +30,7 @@ alsasink async=false enable-last-sample=false"
 #else
 #define PIPE "uridecodebin expose-all-streams=false name=" SRC_NAME " \
 caps=video/x-h264;audio/x-raw " SRC_NAME ". ! queue ! h264parse ! \
-queue ! g1h264dec ! video/x-raw,width=800,height=480 ! \
+queue ! g1h264dec ! video/x-raw,width=%2,height=%3 ! \
 progressreport silent=true do-query=true update-freq=1 format=time \
 name=" PROGRESS_NAME " ! perf name=" PERF_NAME " ! \
 g1fbdevsink zero-memcpy=true max-lateness=-1 async=false \
@@ -139,8 +140,10 @@ busCallback (GstBus *bus,
   return TRUE;
 }
 
-VideoPlayer::VideoPlayer(int gem)
-        : _gem(gem)
+VideoPlayer::VideoPlayer(int gem, int width, int height)
+        : _gem(gem),
+		  _width(width),
+		  _height(height)		
 {
     gst_init(NULL, NULL);
 
@@ -154,11 +157,12 @@ VideoPlayer::createPipeline(){
     GError *error = NULL;
     GstBus *bus;
     guint bus_watch_id;
-
     /* Make sure we don't leave orphan references */
     destroyPipeline();
 
-    QString pipe(QString(PIPE).arg(_gem));
+	printf("gem = %d _width= %d _height=%d \n", _gem, _width, _height);
+
+    QString pipe(QString(PIPE).arg(_gem, _width, _height));
     printf("%s\n", pipe.toStdString().c_str());
     this->_videoPipeline = gst_parse_launch (pipe.toStdString().c_str(), &error);
     if (!this->_videoPipeline) {

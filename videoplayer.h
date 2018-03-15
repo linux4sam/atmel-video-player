@@ -26,7 +26,7 @@ class VideoPlayer : public QObject
 {
     Q_OBJECT
 public:
-    VideoPlayer(int gem = -1);
+    VideoPlayer(int gem = -1, int width = -1, int height = -1);
     ~VideoPlayer();
 
 
@@ -78,8 +78,7 @@ private:
     GstElement *_videoPipeline;      // Video Pipeline
     GstElement *_src;                // Source element
     GstElement *_volume;             // Volume controller
-    int _gem;
-
+    int _gem, _width, _height;
     bool setState(GstState state);
     bool createPipeline();
     void destroyPipeline();

@@ -82,9 +82,11 @@ Player::Player(QWidget *parent) :
     if (gem < 0)
         fprintf(stderr, "error: setup_planes() failed\n");
 
+    QRect rec = QApplication::desktop()->screenGeometry();
+
     // initialize variables
     _controls = new PlayControls();
-    _videoplayer = new VideoPlayer(gem);
+    _videoplayer = new VideoPlayer(gem, rec.width(), rec.height());
     _toolBar = new QToolBar(this);
     _fpsL = new QLabel(this);
     _tools = new Tools;
