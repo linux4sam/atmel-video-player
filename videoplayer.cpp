@@ -60,7 +60,7 @@ busCallback (GstBus *bus,
     }
     case GST_MESSAGE_EOS:{
         /// end-of-stream
-#if defined PLANA || defined PLAND
+#if ((defined PLANA || defined PLAND) && defined FPSVIEW)
           gchar *perf = NULL;
           perf = g_strdup_printf ("fps: 0\n"
                       "bps (Mbit/s): 0");
@@ -93,7 +93,7 @@ busCallback (GstBus *bus,
       break;
     }
     case GST_MESSAGE_INFO: {
-#if defined PLANA || defined PLAND
+#if ((defined PLANA || defined PLAND) && defined FPSVIEW)
       if (!strncmp(GST_MESSAGE_SRC_NAME(message), PERF_NAME, 1)) {
 	GError *error = NULL;
 	gchar *debug = NULL;
@@ -162,7 +162,7 @@ VideoPlayer::createPipeline(){
 
 	printf("gem = %d _width= %d _height=%d \n", _gem, _width, _height);
 
-    QString pipe(QString(PIPE).arg(_gem, _width, _height));
+    QString pipe(QString(PIPE).arg(_gem).arg(_width).arg(_height));
     printf("%s\n", pipe.toStdString().c_str());
     this->_videoPipeline = gst_parse_launch (pipe.toStdString().c_str(), &error);
     if (!this->_videoPipeline) {

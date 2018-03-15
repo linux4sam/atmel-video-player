@@ -79,7 +79,9 @@ private:
 
 private slots:
     void updateCPUusage();
+#if defined FPSVIEW
     void fpsChanged(QString perf);
+#endif
     void onControlsTimeout();
     void onSetFullScreen();
     void onOpenFile();

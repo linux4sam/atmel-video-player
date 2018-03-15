@@ -88,7 +88,9 @@ Player::Player(QWidget *parent) :
     _controls = new PlayControls();
     _videoplayer = new VideoPlayer(gem, rec.width(), rec.height());
     _toolBar = new QToolBar(this);
+#if defined FPSVIEW
     _fpsL = new QLabel(this);
+#endif
     _tools = new Tools;
     _cpuTimer = new QTimer(this);
     _hideControlsTimer = new QTimer(this);
@@ -97,7 +99,7 @@ Player::Player(QWidget *parent) :
     // Setup controls
     setUpPlayControls();
 
-#if defined PLANA || defined PLAND
+#if ((defined PLANA || defined PLAND) && (defined FPSVIEW))
     setUpFpsLabel();
 #endif
 
@@ -112,7 +114,9 @@ Player::Player(QWidget *parent) :
     connect(_controls, SIGNAL(setMute(bool)), _videoplayer, SLOT(setMute(bool)));
     connect(_videoplayer, SIGNAL(durationChanged(qint64)), _controls, SLOT(durationChanged(qint64)));
     connect(_videoplayer, SIGNAL(positionChanged(qint64)), _controls, SLOT(positionChanged(qint64)));
+#if defined FPSVIEW
     connect(_videoplayer, SIGNAL(fpsChanged(QString)), this, SLOT(fpsChanged(QString)));
+#endif
     connect(_videoplayer, SIGNAL(playState(int)), _controls, SLOT(setPlayState(int)));
 
     // Start timers
@@ -182,9 +186,11 @@ void Player::updateCPUusage(){
 }
 
 /* Update perf information */
+#if defined FPSVIEW
 void Player::fpsChanged(QString perf){
     this->_fpsL->setText(perf);
 }
+#endif
 
 /* Hide controls when fullscreen button pressed*/
 void Player::onSetFullScreen(){
@@ -192,7 +198,9 @@ void Player::onSetFullScreen(){
     if(! _toolBar->isHidden()){
         _hideControlsTimer->stop();
         _toolBar->hide();
+#if defined FPSVIEW
         _fpsL->hide();
+#endif
     }
 }
 
@@ -200,8 +208,10 @@ void Player::onSetFullScreen(){
 void Player::onControlsTimeout(){
     if(! _toolBar->isHidden())
         _toolBar->hide();
+#if defined FPSVIEW
     if(! _fpsL->isHidden())
         _fpsL->hide();
+#endif
     _hideControlsTimer->stop();
 }
 
@@ -211,7 +221,7 @@ void Player::mousePressEvent(QMouseEvent *){
        _toolBar->show();
        _hideControlsTimer->start(_hideTimeout * 1000);
     }
-#if defined PLANA || defined PLAND
+#if ((defined PLANA || defined PLAND) && defined FPSVIEW)
     if(_fpsL->isHidden())
            _fpsL->show();
 #endif
@@ -221,7 +231,7 @@ void Player::mouseMoveEvent(QMouseEvent *){
     if(_toolBar->isHidden() && _hideControlsTimer->isActive()) // Show controls if hidden
         _toolBar->show();
 
-#if defined PLANA || defined PLAND
+#if ((defined PLANA || defined PLAND) && defined FPSVIEW)
     if(_fpsL->isHidden())
            _fpsL->show();
 #endif

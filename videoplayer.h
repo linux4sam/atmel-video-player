@@ -40,7 +40,9 @@ public:
 signals:
     void durationChanged(qint64 duration);      // Media Duration changed
     void positionChanged(qint64 position);      // Media position changed
+#if defined FPSVIEW
     void fpsChanged(QString fps);      // Media position changed
+#endif
     void playState(int state);                 // pipeline play state (true = onPlay, false = onPause)
 
 public slots:
