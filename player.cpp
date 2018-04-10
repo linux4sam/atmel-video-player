@@ -85,7 +85,9 @@ Player::Player(QWidget *parent) :
     QRect rec = QApplication::desktop()->screenGeometry();
 
     // initialize variables
-    _controls = new PlayControls();
+	bool small_screen = (rec.width() >= 800 ? true : false);
+    _controls = new PlayControls(0, small_screen);
+    _controls->setGeometry(QRect(0, 0, rec.width(), rec.height()));
     _videoplayer = new VideoPlayer(gem, rec.width(), rec.height());
     _toolBar = new QToolBar(this);
 #if defined FPSVIEW

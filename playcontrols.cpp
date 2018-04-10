@@ -11,7 +11,7 @@
 #include "playcontrols.h"
 #include "ui_playcontrols.h"
 
-PlayControls::PlayControls(QWidget *parent) :
+PlayControls::PlayControls(QWidget *parent, bool small_screen) :
     QWidget(parent),
     ui(new Ui::PlayControls),
     _onPlay(false),
@@ -19,7 +19,8 @@ PlayControls::PlayControls(QWidget *parent) :
     _totalDuration(0),
     _duration("unknown"),
     _currentPosition(0),
-    _allowSeek(true)
+    _allowSeek(true),
+	_smallScreen(small_screen)
 {
     ui->setupUi(this);
 
@@ -34,6 +35,9 @@ PlayControls::PlayControls(QWidget *parent) :
     connect(ui->volumeControl, SIGNAL(sliderMoved(int)), this, SIGNAL(setVolume(int)));
     connect(ui->mediaPosition, SIGNAL(sliderMoved(int)), this, SIGNAL(positionChanged(int)));
     connect(ui->optionsButtonn, SIGNAL(clicked()), this, SIGNAL(showOptions()));
+
+	if(!_smallScreen)
+		ui->positioLabel->hide();
 
 #if !defined PLANA && !defined PLAND 
     ui->mediaPosition->hide();    
@@ -64,7 +68,7 @@ void PlayControls::on_PlayPause_clicked()
 /* Set Mute/unmute state */
 void PlayControls::on_muteButton_clicked()
 {
-    emit setMute(!_onMute);
+	emit setMute(!_onMute);
     if(_onMute){ // Unmute
         ui->muteButton->setIcon(QIcon(MUTE_IMG));
     }
@@ -77,27 +81,28 @@ void PlayControls::on_muteButton_clicked()
 
 /* Update media duration */
 void PlayControls::durationChanged(qint64 duration){
-    _totalDuration = duration;
-    ui->mediaPosition->setMaximum(_totalDuration);
-
-    // Calculate time
-    _duration = secondsToString(_totalDuration);
-    updatePositionLabel(_currentPosition);
+	_totalDuration = duration;
+	ui->mediaPosition->setMaximum(_totalDuration);
+	
+	// Calculate time
+	_duration = secondsToString(_totalDuration);
+	updatePositionLabel(_currentPosition);
 }
 
 
 /* Update media position */
 void PlayControls::positionChanged(qint64 position){
-    _currentPosition = position;
-    ui->mediaPosition->setValue(_currentPosition);
-    // Update position label
-    updatePositionLabel(_currentPosition);
+	_currentPosition = position;
+	ui->mediaPosition->setValue(_currentPosition);
+	// Update position label
+	updatePositionLabel(_currentPosition);
 }
 
 
 /* Update media position label */
 void PlayControls::updatePositionLabel(int position){
-    ui->positioLabel->setText(secondsToString(position) + "/" + _duration);
+	if(_smallScreen)
+    	ui->positioLabel->setText(secondsToString(position) + "/" + _duration);
 }
 
 

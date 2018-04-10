@@ -36,8 +36,8 @@
      <widget class="QToolButton" name="PlayPause">
       <property name="minimumSize">
        <size>
-        <width>60</width>
-        <height>60</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <property name="focusPolicy">
@@ -67,25 +67,110 @@
        <string/>
       </property>
       <property name="styleSheet">
-       <string notr="true">QSlider::add-page:horizontal {
-    background: rgb(230,230, 230)
+       <string notr="true">QSlider::groove:horizontal {
+border: 1px solid #bbb;
+background: white;
+height: 10px;
+border-radius: 4px;
 }
-QSlider::sub-page:horizontal{
-    background: rgb(230, 230, 230)
+
+QSlider::sub-page:horizontal {
+background: qlineargradient(x1: 0, y1: 0,    x2: 0, y2: 1,
+    stop: 0 #66e, stop: 1 #bbf);
+background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,
+    stop: 0 #bbf, stop: 1 #55f);
+border: 1px solid #777;
+height: 10px;
+border-radius: 4px;
+}
+
+QSlider::add-page:horizontal {
+background: #fff;
+border: 1px solid #777;
+height: 10px;
+border-radius: 4px;
+}
+
+QSlider::handle:horizontal {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+    stop:0 #eee, stop:1 #ccc);
+border: 1px solid #777;
+width: 13px;
+margin-top: -2px;
+margin-bottom: -2px;
+border-radius: 4px;
+}
+
+QSlider::handle:horizontal:hover {
+background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+    stop:0 #fff, stop:1 #ddd);
+border: 1px solid #444;
+border-radius: 4px;
+}
+
+QSlider::sub-page:horizontal:disabled {
+background: #bbb;
+border-color: #999;
+}
+
+QSlider::add-page:horizontal:disabled {
+background: #eee;
+border-color: #999;
+}
+
+QSlider::handle:horizontal:disabled {
+background: #eee;
+border: 1px solid #aaa;
+border-radius: 4px;
 }</string>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
+      <property name="invertedAppearance">
+       <bool>false</bool>
+      </property>
+      <property name="invertedControls">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item>
      <widget class="QLabel" name="positioLabel">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
       <property name="styleSheet">
        <string notr="true">color: #c5c5c5</string>
       </property>
+      <property name="lineWidth">
+       <number>2</number>
+      </property>
       <property name="text">
        <string>0/0</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -93,8 +178,8 @@ QSlider::sub-page:horizontal{
      <widget class="QToolButton" name="muteButton">
       <property name="minimumSize">
        <size>
-        <width>60</width>
-        <height>60</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <property name="mouseTracking">
@@ -122,13 +207,13 @@ QSlider::sub-page:horizontal{
      <widget class="QSlider" name="volumeControl">
       <property name="minimumSize">
        <size>
-        <width>150</width>
-        <height>30</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>250</width>
+        <width>16777215</width>
         <height>16777215</height>
        </size>
       </property>
@@ -148,7 +233,7 @@ QSlider::handle:horizontal{
 	margin: -20px 0;
     border-radius: 10px;
 	border: 1px solid rgb(208, 204, 204);
-	width: 40px;
+	width: 20px;
     height: 40px;
 }
 QSlider::add-page:horizontal {
@@ -173,8 +258,8 @@ QSlider::sub-page:horizontal{
      <widget class="QToolButton" name="fullScreenButtonn">
       <property name="minimumSize">
        <size>
-        <width>60</width>
-        <height>60</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <property name="focusPolicy">
@@ -197,6 +282,12 @@ QSlider::sub-page:horizontal{
     </item>
     <item>
      <widget class="QProgressBar" name="cpuUsage">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+        <kerning>true</kerning>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true"> QProgressBar {
      border: 2px solid grey;
@@ -213,7 +304,7 @@ QSlider::sub-page:horizontal{
        <number>0</number>
       </property>
       <property name="format">
-       <string>CPU: %p%</string>
+       <string>CPU:%p%</string>
       </property>
      </widget>
     </item>
@@ -221,8 +312,8 @@ QSlider::sub-page:horizontal{
      <widget class="QToolButton" name="optionsButtonn">
       <property name="minimumSize">
        <size>
-        <width>60</width>
-        <height>60</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <property name="focusPolicy">

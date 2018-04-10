@@ -33,7 +33,7 @@ class PlayControls : public QWidget
     Q_OBJECT
 
 public:
-    explicit PlayControls(QWidget *parent = 0);
+    PlayControls(QWidget *parent, bool small_screen);
     ~PlayControls();
 
     /**
@@ -115,6 +115,7 @@ private:
     QString _duration;          // Video total duration (hh:mm:ss formated)
     int _currentPosition;       // Current position of the stream
     bool _allowSeek;            // Allow seek
+    bool _smallScreen;
 };
 
 #endif // PLAYCONTROLS_H
