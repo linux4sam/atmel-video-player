@@ -156,7 +156,6 @@ bool
 VideoPlayer::createPipeline(){
     GError *error = NULL;
     GstBus *bus;
-    guint bus_watch_id;
     /* Make sure we don't leave orphan references */
     destroyPipeline();
 
@@ -186,7 +185,7 @@ VideoPlayer::createPipeline(){
     }
 
     bus = gst_pipeline_get_bus (GST_PIPELINE (this->_videoPipeline));
-    bus_watch_id = gst_bus_add_watch (bus, &busCallback, this);
+    gst_bus_add_watch (bus, &busCallback, this);
     gst_object_unref (bus);
 
     return true;
@@ -212,10 +211,12 @@ bool VideoPlayer::play(bool mute,int volume){
     emit playState(this->setState(GST_STATE_PLAYING));
     setVolume(volume);
     setMute(mute);
+    return true;
 }
 
 bool VideoPlayer::pause(){
     emit playState(!this->setState(GST_STATE_PAUSED));
+    return true;
 }
 
 bool VideoPlayer::null(){
