@@ -20,7 +20,7 @@
 
 #if defined PLANA || defined PLANC
 #define PIPE "uridecodebin expose-all-streams=false name=" SRC_NAME " \
-caps=video/x-h264;audio/x-raw " SRC_NAME ". ! queue ! h264parse ! \
+caps=video/x-h264\\;audio/x-raw " SRC_NAME ". ! queue ! h264parse ! \
 queue ! g1h264dec ! video/x-raw,width=%2,height=%3,format=BGRx ! \
 progressreport silent=true do-query=true update-freq=1 format=time \
 name=" PROGRESS_NAME " ! perf name=" PERF_NAME " ! \
@@ -29,7 +29,7 @@ audio/x-raw,format=S16LE ! volume name=" VOLUME_NAME " ! \
 alsasink async=false enable-last-sample=false"
 #else
 #define PIPE "uridecodebin expose-all-streams=false name=" SRC_NAME " \
-caps=video/x-h264;audio/x-raw " SRC_NAME ". ! queue ! h264parse ! \
+caps=video/x-h264\\;audio/x-raw " SRC_NAME ". ! queue ! h264parse ! \
 queue ! g1h264dec ! video/x-raw,width=%2,height=%3 ! \
 progressreport silent=true do-query=true update-freq=1 format=time \
 name=" PROGRESS_NAME " ! perf name=" PERF_NAME " ! \
