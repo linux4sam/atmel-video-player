@@ -73,7 +73,7 @@ Player::Player(QWidget *parent) :
     showFullScreen();
 
     // Set transparent background
-    setAttribute(Qt::WA_TranslucentBackground);
+//    setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint);
 
     centralWidget()->setMouseTracking(true);
@@ -81,6 +81,8 @@ Player::Player(QWidget *parent) :
     int gem = setup_planes();
     if (gem < 0)
         fprintf(stderr, "error: setup_planes() failed\n");
+
+    gem = 1; /* temporary hardcode the overlay to display the video */
 
     QRect rec = QApplication::desktop()->screenGeometry();
 
